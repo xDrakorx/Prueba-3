@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mis Finanzas</title>
+  <style>
+    :root {
+      --bg-main: #0e1015;
+      --bg-card: #161922;
+      --bg-input: #1e222d;
+      --border: #2a2f3d;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --accent: #3b49df;
+      --accent-hover: #2e3bc4;
+      --green: #10b981;
+      --red: #ef4444;
+      --cyan: #38bdf8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 8px 4px;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .btn-csv {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-csv:active {
+      transform: scale(0.97);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    /* Summary Grid (2x2 para lectura cómoda en móvil) */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-box {
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .val-balance { color: var(--text-primary); }
+    .val-ingresos { color: var(--green); }
+    .val-gastos { color: var(--red); }
+    .val-ahorros { color: var(--cyan); }
+
+    /* Section Titles */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .btn-primary:active {
+      background: var(--accent-hover);
+    }
+
+    /* Metas Section */
+    .btn-small {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .goal-form {
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .goal-form.active {
+      display: block;
+    }
+
+    .goal-item {
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .goal-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .goal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .goal-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .goal-target {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-main);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--cyan);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    .goal-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+
+    .goal-saved {
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .goal-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-abonar {
+      background: var(--cyan);
+      color: #090d16;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .btn-del {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    /* Historial & Filters */
+    .filters {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .tx-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .tx-info h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .tx-meta {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .tx-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tx-amount {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      padding: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Mis Finanzas</h1>
+    <button class="btn-csv" onclick="exportarCSV()">📥 Exportar CSV</button>
+  </header>
+
+  <!-- Resumen de 4 indicadores -->
+  <section class="card">
+    <div class="summary-grid">
+      <div class="stat-box">
+        <div class="stat-label">Balance</div>
+        <div class="stat-value val-balance" id="totalBalance">$0.00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Ingresos</div>
+        <div class="stat-value val-ingresos" id="totalIngresos">$0.00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Gastos</div>
+        <div class="stat-value val-gastos" id="totalGastos">$0.00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Ahorros</div>
+        <div class="stat-value val-ahorros" id="totalAhorros">$0.00</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nuevo Movimiento -->
+  <section class="card">
+    <div class="section-header">
+      <div class="section-title">➕ Nuevo Movimiento</div>
+    </div>
+    <form id="txForm">
+      <div class="form-group">
+        <label>Descripción</label>
+        <input type="text" id="desc" placeholder="Ej. Comida, Sueldo, Taxi..." required>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Monto ($)</label>
+          <input type="number" id="monto" step="0.01" min="0.01" placeholder="0.00" required>
+        </div>
+        <div>
+          <label>Tipo</label>
+          <select id="tipo">
+            <option value="gasto">Gasto (-)</option>
+            <option value="ingreso">Ingreso (+)</option>
+            <option value="ahorro">Ahorro (★)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Categoría</label>
+          <select id="categoria">
+            <option value="General">General</option>
+            <option value="Alimentación">Alimentación</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Vivienda">Vivienda</option>
+            <option value="Ocio">Ocio</option>
+            <option value="Salario">Salario</option>
+          </select>
+        </div>
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="fecha" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">Guardar Movimiento</button>
+    </form>
+  </section>
+
+  <!-- Apartado de Metas -->
+  <section class="card">
+    <div class="section-header">
+      <div class="section-title">🎯 Metas de Ahorro</div>
+      <button class="btn-small" onclick="toggleGoalForm()">+ Nueva Meta</button>
+    </div>
+
+    <form id="goalForm" class="goal-form">
+      <div class="form-row" style="margin-bottom: 8px;">
+        <div>
+          <label>Producto / Meta</label>
+          <input type="text" id="goalName" placeholder="Ej. PC Gamer" required>
+        </div>
+        <div>
+          <label>Precio ($)</label>
+          <input type="number" id="goalTarget" step="0.01" min="1" placeholder="200.00" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" style="padding: 9px; font-size: 0.85rem;">Crear Meta</button>
+    </form>
+
+    <div id="goalsList"></div>
+  </section>
+
+  <!-- Historial -->
+  <section class="card">
+    <div class="section-header">
+      <div class="section-title">📋 Historial</div>
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('ingreso', this)">Ingresos</button>
+        <button class="filter-btn" onclick="setFilter('gasto', this)">Gastos</button>
+        <button class="filter-btn" onclick="setFilter('ahorro', this)">Ahorros</button>
+      </div>
+    </div>
+    <div id="txList"></div>
+  </section>
+
+  <script>
+    // Inicializar fecha actual
+    document.getElementById('fecha').valueAsDate = new Date();
+
+    // Cargar datos desde localStorage
+    let transacciones = JSON.parse(localStorage.getItem('mf_transacciones')) || [];
+    let metas = JSON.parse(localStorage.getItem('mf_metas')) || [
+      { id: 1, nombre: 'PC Gamer', objetivo: 200, ahorrado: 50 }
+    ];
+    let filtroActual = 'todos';
+
+    function guardarDatos() {
+      localStorage.setItem('mf_transacciones', JSON.stringify(transacciones));
+      localStorage.setItem('mf_metas', JSON.stringify(metas));
+    }
+
+    // Registrar movimiento
+    document.getElementById('txForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nuevo = {
+        id: Date.now(),
+        desc: document.getElementById('desc').value.trim(),
+        monto: parseFloat(document.getElementById('monto').value),
+        tipo: document.getElementById('tipo').value,
+        categoria: document.getElementById('categoria').value,
+        fecha: document.getElementById('fecha').value
+      };
+      transacciones.unshift(nuevo);
+      guardarDatos();
+      e.target.reset();
+      document.getElementById('fecha').valueAsDate = new Date();
+      renderizarTodo();
+    });
+
+    function eliminarTx(id) {
+      transacciones = transacciones.filter(t => t.id !== id);
+      guardarDatos();
+      renderizarTodo();
+    }
+
+    // Gestión de Metas
+    function toggleGoalForm() {
+      document.getElementById('goalForm').classList.toggle('active');
+    }
+
+    document.getElementById('goalForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nuevaMeta = {
+        id: Date.now(),
+        nombre: document.getElementById('goalName').value.trim(),
+        objetivo: parseFloat(document.getElementById('goalTarget').value),
+        ahorrado: 0
+      };
+      metas.push(nuevaMeta);
+      guardarDatos();
+      e.target.reset();
+      toggleGoalForm();
+      renderizarMetas();
+    });
+
+    function abonarMeta(id) {
+      const cantidad = parseFloat(prompt('¿Cuánto deseas abonar a esta meta ($)?'));
+      if (!isNaN(cantidad) && cantidad > 0) {
+        const meta = metas.find(m => m.id === id);
+        if (meta) {
+          meta.ahorrado += cantidad;
+          // También registra el movimiento como ahorro en el historial
+          transacciones.unshift({
+            id: Date.now(),
+            desc: `Abono meta: ${meta.nombre}`,
+            monto: cantidad,
+            tipo: 'ahorro',
+            categoria: 'Ahorro',
+            fecha: new Date().toISOString().split('T')[0]
+          });
+          guardarDatos();
+          renderizarTodo();
+        }
+      }
+    }
+
+    function eliminarMeta(id) {
+      metas = metas.filter(m => m.id !== id);
+      guardarDatos();
+      renderizarMetas();
+    }
+
+    function setFilter(tipo, btn) {
+      filtroActual = tipo;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderizarHistorial();
+    }
+
+    function renderizarResumen() {
+      let ingresos = 0, gastos = 0, ahorros = 0;
+
+      transacciones.forEach(t => {
+        if (t.tipo === 'ingreso') ingresos += t.monto;
+        else if (t.tipo === 'gasto') gastos += t.monto;
+        else if (t.tipo === 'ahorro') ahorros += t.monto;
+      });
+
+      const balance = ingresos - gastos - ahorros;
+
+      document.getElementById('totalBalance').textContent = `$${balance.toFixed(2)}`;
+      document.getElementById('totalIngresos').textContent = `$${ingresos.toFixed(2)}`;
+      document.getElementById('totalGastos').textContent = `$${gastos.toFixed(2)}`;
+      document.getElementById('totalAhorros').textContent = `$${ahorros.toFixed(2)}`;
+    }
+
+    function renderizarMetas() {
+      const contenedor = document.getElementById('goalsList');
+      if (metas.length === 0) {
+        contenedor.innerHTML = '<div class="empty-msg">No hay metas registradas.</div>';
+        return;
+      }
+
+      contenedor.innerHTML = metas.map(m => {
+        const pct = Math.min((m.ahorrado / m.objetivo) * 100, 100).toFixed(0);
+        return `
+          <div class="goal-item">
+            <div class="goal-top">
+              <span class="goal-name">${m.nombre}</span>
+              <span class="goal-target">Meta: $${m.objetivo.toFixed(2)} (${pct}%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: ${pct}%"></div>
+            </div>
+            <div class="goal-bottom">
+              <span class="goal-saved">Ahorrado: $${m.ahorrado.toFixed(2)}</span>
+              <div class="goal-actions">
+                <button class="btn-abonar" onclick="abonarMeta(${m.id})">+ Abonar</button>
+                <button class="btn-del" onclick="eliminarMeta(${m.id})">✕</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderizarHistorial() {
+      const contenedor = document.getElementById('txList');
+      const filtradas = filtroActual === 'todos'
+        ? transacciones
+        : transacciones.filter(t => t.tipo === filtroActual);
+
+      if (filtradas.length === 0) {
+        contenedor.innerHTML = '<div class="empty-msg">Sin movimientos registrados.</div>';
+        return;
+      }
+
+      contenedor.innerHTML = filtradas.map(t => {
+        let signo = '-', color = 'var(--red)';
+        if (t.tipo === 'ingreso') { signo = '+'; color = 'var(--green)'; }
+        if (t.tipo === 'ahorro') { signo = '★ '; color = 'var(--cyan)'; }
+
+        return `
+          <div class="tx-item">
+            <div class="tx-info">
+              <h4>${t.desc}</h4>
+              <div class="tx-meta">${t.categoria} • ${t.fecha}</div>
+            </div>
+            <div class="tx-right">
+              <span class="tx-amount" style="color: ${color}">${signo}$${t.monto.toFixed(2)}</span>
+              <button class="btn-del" onclick="eliminarTx(${t.id})">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function exportarCSV() {
+      if (transacciones.length === 0) return alert('No hay datos para exportar.');
+      let csv = 'Fecha,Descripcion,Categoria,Tipo,Monto\n';
+      transacciones.forEach(t => {
+        csv += `${t.fecha},"${t.desc}",${t.categoria},${t.tipo},${t.monto}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `mis_finanzas_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+    }
+
+    function renderizarTodo() {
+      renderizarResumen();
+      renderizarMetas();
+      renderizarHistorial();
+    }
+
+    renderizarTodo();
+  </script>
+</body>
+</html>
